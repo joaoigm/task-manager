@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.joaoigm.kotlin.grpc";
+option java_outer_classname = "TaskManager";
+option objc_class_prefix = "HLW";
+
+
+package com.joaoigm.kotlin.grpc;
+
+import "google/api/annotations.proto";
+
+service TaskManagerService {
+  rpc create(CreateRequest) returns (Task) {
+    option(google.api.http) = {
+      post: "/task"
+      body: "*"
+    };
+  }
+
+  rpc findById(TaskWithIdRequest) returns (Task) {
+    option(google.api.http) = {
+      get: "/task/{id}"
+    };
+  }
+
+  rpc findAllByStatus(FindAllByStatusRequest) returns (FindAllByStatusResponse) {
+    option(google.api.http) = {
+      get: "/task/status/{status}"
+    };
+  }
+
+  rpc findAll(FindAllRequest) returns (FindAllResponse) {
+    option(google.api.http) = {
+      get: "/task"
+    };
+  }
+
+  rpc finalize(TaskWithIdRequest) returns (Task) {
+    option(google.api.http) = {
+      put: "/task"
+      body: "*"
+    };
+  }
+
+  rpc exclude(TaskWithIdRequest) returns (Task) {
+    option(google.api.http) = {
+      delete: "/task"
+      body: "*"
+    };
+  }
+}
+
+message FindAllResponse {
+  repeated Task tasks = 1;
+}
+
+message FindAllRequest {}
+
+message FindAllByStatusRequest {
+  TaskStatus status = 1;
+}
+
+message FindAllByStatusResponse {
+  repeated Task tasks = 1;
+}
+
+message TaskWithIdRequest {
+  int64 id = 1;
+}
+
+message CreateRequest {
+  string title = 1;
+  TaskStatus status = 2;
+}
+
+message Task {
+  string title = 1;
+  int64 id = 2;
+  TaskStatus status = 3;
+}
+
+enum TaskStatus {
+  ABERTO = 0;
+  CONCLUIDO = 1;
+  EXCLUIDO = 2;
+}
